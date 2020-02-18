@@ -19,7 +19,7 @@ module Kimurai::BrowserBuilder
       Capybara.register_driver :poltergeist_phantomjs do |app|
         # Create driver options
         driver_options = {
-          js_errors: false, debug: false, inspector: false, phantomjs_options: []
+          js_errors: false, debug: false, inspector: false, phantomjs_options: [], phantomjs: nil
         }
 
         if extensions = @config[:extensions].presence
@@ -48,6 +48,12 @@ module Kimurai::BrowserBuilder
         if @config[:disable_images].present?
           driver_options[:phantomjs_options] << "--load-images=no"
           logger.debug "BrowserBuilder (poltergeist_phantomjs): enabled disable_images"
+        end
+
+        # Binary path
+        if @config[:phantomjs_path].present?
+          driver_options[:phantomjs] = @config[:phantomjs_path]
+          logger.debug "BrowserBuilder (poltergeist_phantomjs): find correct path"
         end
 
         Capybara::Poltergeist::Driver.new(app, driver_options)
